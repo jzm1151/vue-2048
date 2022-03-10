@@ -8,23 +8,36 @@
 </head>
 
 <body>
-	<div id="game-board">
-		<div class="cell"></div>
-		<div class="cell"></div>
-		<div class="cell"></div>
-		<div class="cell"></div>
-		<div class="cell"></div>
-		<div class="cell"></div>
-		<div class="cell"></div>
-		<div class="cell"></div>
-		<div class="cell"></div>
-		<div class="cell"></div>
-		<div class="cell"></div>
-		<div class="cell"></div>
-		<div class="cell"></div>
-		<div class="cell"></div>
-		<div class="cell"></div>
-		<div class="cell"></div>
+	<div id="app">
+		<div class="banner">
+			<button id="new-game" v-on:click="start()">NEW GAME</button>
+			<div class="score">
+				<span>Score</span>
+				<span id="score-value">0</span>
+			</div>
+		</div>
+		<div id="game-board">
+			<div class="cell"></div>
+			<div class="cell"></div>
+			<div class="cell"></div>
+			<div class="cell"></div>
+			<div class="cell"></div>
+			<div class="cell"></div>
+			<div class="cell"></div>
+			<div class="cell"></div>
+			<div class="cell"></div>
+			<div class="cell"></div>
+			<div class="cell"></div>
+			<div class="cell"></div>
+			<div class="cell"></div>
+			<div class="cell"></div>
+			<div class="cell"></div>
+			<div class="cell"></div>
+
+			<div class="game-over">
+				<span>Game over</span>
+			</div>
+		</div>
 	</div>
 
 	<script src="scripts/vue.js"></script>

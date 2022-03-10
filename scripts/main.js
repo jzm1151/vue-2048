@@ -1,5 +1,5 @@
 const app = new Vue({
-    el: '#game-board',
+    el: '#app',
 
     data: {
         virtualGameBoard: []
@@ -9,6 +9,15 @@ const app = new Vue({
         start: function() {
             const gameBoard = document.querySelector('#game-board');
             const size = window.getComputedStyle(gameBoard).gridTemplateColumns.split(' ').length;
+            const oldTileList = gameBoard.querySelectorAll('.tile');
+            for (let i = oldTileList.length-1; i >= 0; i--) {
+                gameBoard.removeChild(oldTileList[i]);
+            }
+
+            document.querySelector('.game-over').style.visibility = 'hidden';
+
+            const scoreValueEle = document.querySelector('#score-value');
+            scoreValueEle.innerText = 0;
 
             this.virtualGameBoard = [];
             for (let i = 0; i < size; i++) {
@@ -38,6 +47,20 @@ const app = new Vue({
             tile2.style.setProperty('--y', y2);
             this.virtualGameBoard[y2][x2] = tile2;
             gameBoard.appendChild(tile2);
+        },
+        gameOver: function() {
+            for (let i = 0; i < this.virtualGameBoard.length-1; i++) {
+                for (let j = 0; j < this.virtualGameBoard.length-1; j++) {
+                    if (this.virtualGameBoard[i][j].innerText === this.virtualGameBoard[i][j+1].innerText || 
+                        this.virtualGameBoard[i][j].innerText === this.virtualGameBoard[i+1][j].innerText) 
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            document.querySelector('.game-over').style.visibility = 'visible';
+            return true;
         },
         placeNewTile: function() {
             const positionChoices = [];
@@ -81,7 +104,12 @@ const app = new Vue({
 
             const tile = document.createElement('div');
             tile.classList.add('tile');
-            tile.innerText = parseInt(tile1.innerText) + parseInt(tile2.innerText);
+            const tileValue = parseInt(tile1.innerText) + parseInt(tile2.innerText);
+            const scoreValueEle = document.querySelector('#score-value');
+            scoreValueEle.innerText = tileValue + parseInt(scoreValueEle.innerText); 
+            tile.innerText = tileValue;
+            const backLight = 100 - Math.log2(tileValue) * 5;
+            tile.style.setProperty('--b-l', `${backLight}%`);
             tile.style.setProperty('--x', x1);
             tile.style.setProperty('--y', y1);
             this.virtualGameBoard[y1][x1] = tile;
@@ -120,6 +148,7 @@ const app = new Vue({
                 }
 
             this.placeNewTile();
+            this.gameOver();
         },
         getNearestAbove: function(y, x) {
             for (let i = y; i >= 0; i--) {
@@ -155,19 +184,86 @@ const app = new Vue({
             }
 
             this.placeNewTile();
+            this.gameOver();
+        },
+        getNearestRight: function(y, x) {
+            for (let i = x; i < this.virtualGameBoard.length; i++) {
+                if (this.virtualGameBoard[y][i] !== null) return i;
+            }
+            return this.virtualGameBoard.length;
+        },
+        shiftRowLeft: function(y) {
+            for (let i = 0; i < this.virtualGameBoard.length; i++) {
+                const nearestPosX = this.getNearestRight(y, i);
+                if (nearestPosX === this.virtualGameBoard.length) return;
+                const nearestEle = this.virtualGameBoard[y][nearestPosX];
+                this.virtualGameBoard[y][nearestPosX] = null;
+                this.virtualGameBoard[y][i] = nearestEle;
+                nearestEle.style.setProperty('--x', i);
+                nearestEle.style.setProperty('--y', y);
+            }
         },
         shiftLeft: function() {
-            alert(3)
+            const gameBoard = document.querySelector('#game-board');
+
+                for (let i = 0; i < this.virtualGameBoard.length; i++) {
+                    this.shiftRowLeft(i);
+               
+                    for (let j = 0; j < this.virtualGameBoard.length-1; j++) {
+                        const tile1 = this.virtualGameBoard[i][j];
+                        const tile2 = this.virtualGameBoard[i][j+1];
+                        if (tile1 !== null && tile2 != null && tile1.innerText === tile2.innerText) this.merge(tile1, tile2);
+                    }
+
+                    this.shiftRowLeft(i);
+                }
+
+            this.placeNewTile();
+            this.gameOver();
+        },
+        getNearestLeft: function(y, x) {
+            for (let i = x; i >= 0; i--) {
+                if (this.virtualGameBoard[y][i] !== null) return i;
+            }
+            return -1;
+        },
+        shiftRowRight: function(y) {
+            for (let i = this.virtualGameBoard.length-1; i >= 0; i--) {
+                const nearestPosX = this.getNearestLeft(y, i);
+                if (nearestPosX === -1) return;
+                const nearestEle = this.virtualGameBoard[y][nearestPosX];
+                this.virtualGameBoard[y][nearestPosX] = null;
+                this.virtualGameBoard[y][i] = nearestEle;
+                nearestEle.style.setProperty('--x', i);
+                nearestEle.style.setProperty('--y', y);
+            }
         },
         shiftRight: function() {
-            alert(4);
+            const gameBoard = document.querySelector('#game-board');
+
+                for (let i = 0; i < this.virtualGameBoard.length; i++) {
+                    this.shiftRowRight(i);
+               
+                    for (let j = this.virtualGameBoard.length-1; j > 0; j--) {
+                        const tile1 = this.virtualGameBoard[i][j];
+                        const tile2 = this.virtualGameBoard[i][j-1];
+                        if (tile1 !== null && tile2 != null && tile1.innerText === tile2.innerText) this.merge(tile1, tile2);
+                    }
+
+                    this.shiftRowRight(i);
+                }
+
+            this.placeNewTile();
+            this.gameOver();
         }
     }
-});
+}); 
 
 app.start();
 
 document.addEventListener('keydown', function(event) {
+    event.preventDefault();
+
     switch(event.key) {
         case "ArrowUp":
             app.shiftUp();
