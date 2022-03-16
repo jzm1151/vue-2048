@@ -51,11 +51,40 @@ const app = new Vue({
         gameOver: function() {
             for (let i = 0; i < this.virtualGameBoard.length-1; i++) {
                 for (let j = 0; j < this.virtualGameBoard.length-1; j++) {
-                    if (this.virtualGameBoard[i][j].innerText === this.virtualGameBoard[i][j+1].innerText || 
-                        this.virtualGameBoard[i][j].innerText === this.virtualGameBoard[i+1][j].innerText) 
+                    if (
+                        this.virtualGameBoard[i][j] === null   ||
+                        this.virtualGameBoard[i][j+1] === null || 
+                        this.virtualGameBoard[i+1][j] === null || 
+                        this.virtualGameBoard[i][j].innerText === this.virtualGameBoard[i][j+1].innerText || 
+                        this.virtualGameBoard[i][j].innerText === this.virtualGameBoard[i+1][j].innerText 
+                        )
                     {
                         return false;
                     }
+                }
+            }
+
+            const x = this.virtualGameBoard.length-1;
+            for (let i = 0; i < this.virtualGameBoard.length-1; i++) {
+                if (
+                    this.virtualGameBoard[i][x] === null   ||
+                    this.virtualGameBoard[i+1][x] === null ||
+                    this.virtualGameBoard[i][x].innerText === this.virtualGameBoard[i+1][x].innerText
+                    ) 
+                {
+                    return false;
+                }
+            }
+
+            const y = this.virtualGameBoard.length-1;
+            for (let i = 0; i < this.virtualGameBoard.length-1; i++) {
+                if (
+                    this.virtualGameBoard[y][i] === null   ||
+                    this.virtualGameBoard[y][i+1] === null ||
+                    this.virtualGameBoard[y][i].innerText === this.virtualGameBoard[y][i+1].innerText
+                    ) 
+                {
+                    return false;
                 }
             }
 
@@ -96,9 +125,12 @@ const app = new Vue({
             x2 = window.getComputedStyle(tile2).getPropertyValue('--x');
             y2 = window.getComputedStyle(tile2).getPropertyValue('--y');
 
-            gameBoard.removeChild(tile1);
-            gameBoard.removeChild(tile2);
-
+            // a hack to make merging look better, but should use promises instead
+            setTimeout(function() {
+                gameBoard.removeChild(tile1);
+                gameBoard.removeChild(tile2);
+            }, 190);
+            
             this.virtualGameBoard[y1][x1] = null;
             this.virtualGameBoard[y2][x2] = null;
 
@@ -108,7 +140,7 @@ const app = new Vue({
             const scoreValueEle = document.querySelector('#score-value');
             scoreValueEle.innerText = tileValue + parseInt(scoreValueEle.innerText); 
             tile.innerText = tileValue;
-            const backLight = 100 - Math.log2(tileValue) * 5;
+            const backLight = 100 - Math.log2(tileValue) * 9;
             tile.style.setProperty('--b-l', `${backLight}%`);
             tile.style.setProperty('--x', x1);
             tile.style.setProperty('--y', y1);
