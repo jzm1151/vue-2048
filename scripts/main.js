@@ -2,7 +2,8 @@ const app = new Vue({
     el: '#app',
 
     data: {
-        virtualGameBoard: []
+        virtualGameBoard: [],
+        stateTestingBoard: []
     },
 
     methods: {
@@ -91,6 +92,15 @@ const app = new Vue({
             document.querySelector('.game-over').style.visibility = 'visible';
             return true;
         },
+        boardChanged: function() {
+            for (let i = 0; i < this.virtualGameBoard.length; i++) {
+                for (let j = 0; j < this.virtualGameBoard.length; j++) {
+                    if (this.virtualGameBoard[i][j] !== this.stateTestingBoard[i][j]) return true;
+                }
+            }
+
+            return false;
+        },
         placeNewTile: function() {
             const positionChoices = [];
             for (let i = 0; i < this.virtualGameBoard.length; i++) {
@@ -167,19 +177,26 @@ const app = new Vue({
         shiftUp: function() {
             const gameBoard = document.querySelector('#game-board');
 
-                for (let i = 0; i < this.virtualGameBoard.length; i++) {
-                    this.shiftColUp(i);
-               
-                    for (let j = 0; j < this.virtualGameBoard.length-1; j++) {
-                        const tile1 = this.virtualGameBoard[j][i];
-                        const tile2 = this.virtualGameBoard[j+1][i];
-                        if (tile1 !== null && tile2 != null && tile1.innerText === tile2.innerText) this.merge(tile1, tile2);
-                    }
+            // create 2d array from objects in this.virtualGameBoard 
+            // with no reference to this.virtualGameBoard
+            this.stateTestingBoard = this.virtualGameBoard.map(function (arr) {
+                return Array.from(arr);
+            });
 
-                    this.shiftColUp(i);
+            for (let i = 0; i < this.virtualGameBoard.length; i++) {
+                this.shiftColUp(i);
+           
+                for (let j = 0; j < this.virtualGameBoard.length-1; j++) {
+                    const tile1 = this.virtualGameBoard[j][i];
+                    const tile2 = this.virtualGameBoard[j+1][i];
+                    if (tile1 !== null && tile2 != null && tile1.innerText === tile2.innerText) this.merge(tile1, tile2);
                 }
 
-            this.placeNewTile();
+                this.shiftColUp(i);
+            }
+
+            if (this.boardChanged()) this.placeNewTile();
+            
             this.gameOver();
         },
         getNearestAbove: function(y, x) {
@@ -201,7 +218,13 @@ const app = new Vue({
             }
         },
         shiftDown: function() {
-             const gameBoard = document.querySelector('#game-board');
+            const gameBoard = document.querySelector('#game-board');
+
+            // create 2d array from objects in this.virtualGameBoard 
+            // with no reference to this.virtualGameBoard
+            this.stateTestingBoard = this.virtualGameBoard.map(function (arr) {
+                return Array.from(arr);
+            });
 
             for (let i = 0; i < this.virtualGameBoard.length; i++) {
                 this.shiftColDown(i);
@@ -215,7 +238,8 @@ const app = new Vue({
                 this.shiftColDown(i);
             }
 
-            this.placeNewTile();
+            if (this.boardChanged()) this.placeNewTile();
+
             this.gameOver();
         },
         getNearestRight: function(y, x) {
@@ -238,19 +262,26 @@ const app = new Vue({
         shiftLeft: function() {
             const gameBoard = document.querySelector('#game-board');
 
-                for (let i = 0; i < this.virtualGameBoard.length; i++) {
-                    this.shiftRowLeft(i);
-               
-                    for (let j = 0; j < this.virtualGameBoard.length-1; j++) {
-                        const tile1 = this.virtualGameBoard[i][j];
-                        const tile2 = this.virtualGameBoard[i][j+1];
-                        if (tile1 !== null && tile2 != null && tile1.innerText === tile2.innerText) this.merge(tile1, tile2);
-                    }
+            // create 2d array from objects in this.virtualGameBoard 
+            // with no reference to this.virtualGameBoard
+            this.stateTestingBoard = this.virtualGameBoard.map(function (arr) {
+                return Array.from(arr);
+            });
 
-                    this.shiftRowLeft(i);
+            for (let i = 0; i < this.virtualGameBoard.length; i++) {
+                this.shiftRowLeft(i);
+           
+                for (let j = 0; j < this.virtualGameBoard.length-1; j++) {
+                    const tile1 = this.virtualGameBoard[i][j];
+                    const tile2 = this.virtualGameBoard[i][j+1];
+                    if (tile1 !== null && tile2 != null && tile1.innerText === tile2.innerText) this.merge(tile1, tile2);
                 }
 
-            this.placeNewTile();
+                this.shiftRowLeft(i);
+            }
+
+            if (this.boardChanged()) this.placeNewTile();
+
             this.gameOver();
         },
         getNearestLeft: function(y, x) {
@@ -273,19 +304,26 @@ const app = new Vue({
         shiftRight: function() {
             const gameBoard = document.querySelector('#game-board');
 
-                for (let i = 0; i < this.virtualGameBoard.length; i++) {
-                    this.shiftRowRight(i);
-               
-                    for (let j = this.virtualGameBoard.length-1; j > 0; j--) {
-                        const tile1 = this.virtualGameBoard[i][j];
-                        const tile2 = this.virtualGameBoard[i][j-1];
-                        if (tile1 !== null && tile2 != null && tile1.innerText === tile2.innerText) this.merge(tile1, tile2);
-                    }
+            // create 2d array from objects in this.virtualGameBoard 
+            // with no reference to this.virtualGameBoard
+            this.stateTestingBoard = this.virtualGameBoard.map(function (arr) {
+                return Array.from(arr);
+            });
 
-                    this.shiftRowRight(i);
+            for (let i = 0; i < this.virtualGameBoard.length; i++) {
+                this.shiftRowRight(i);
+           
+                for (let j = this.virtualGameBoard.length-1; j > 0; j--) {
+                    const tile1 = this.virtualGameBoard[i][j];
+                    const tile2 = this.virtualGameBoard[i][j-1];
+                    if (tile1 !== null && tile2 != null && tile1.innerText === tile2.innerText) this.merge(tile1, tile2);
                 }
 
-            this.placeNewTile();
+                this.shiftRowRight(i);
+            }
+
+            if (this.boardChanged()) this.placeNewTile();
+            
             this.gameOver();
         }
     }

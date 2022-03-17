@@ -5,15 +5,19 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Document</title>
 	<link rel="stylesheet" href="style/main.css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
 <body>
 	<div id="app">
 		<div class="banner">
-			<button id="new-game" v-on:click="start()">NEW GAME</button>
+			<button class="btn-gray" style="padding:.2rem">
+				<i class="large material-icons">insert_chart</i>
+			</button>
+			<button class="btn-gray" v-on:click="start()">New game</button>
 			<div class="score">
-				<span>Score</span>
-				<span id="score-value">0</span>
+				<span>Score:</span>
+				<span id="score-value" style="margin-left: 2px;">0</span>
 			</div>
 		</div>
 		<div id="game-board">
