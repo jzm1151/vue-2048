@@ -11,7 +11,7 @@
 <body>
 	<div id="app">
 		<div class="banner">
-			<button class="btn-gray" style="padding:.2rem">
+			<button class="btn-gray" id="show-leaderboard" style="padding:.2rem">
 				<i class="large material-icons">insert_chart</i>
 			</button>
 			<button class="btn-gray" v-on:click="start()">New game</button>
@@ -40,10 +40,106 @@
 
 			<div class="game-over">
 				<span>Game over</span>
+				<div class="submit-leaderboard">
+					<input type="text" id="name-for-leaderboard" style="width: 50%; margin-right:.5rem">
+					<button class="btn-gray" id="name-leaderboard">Submit score</button>
+				</div>
+			</div>
+		</div>
+		<div class="leaderboard-wrapper">
+			<div class="exit-leaderboard">
+				<span>Leaderboard</span>
+				<button class="btn-gray" id="hide-leaderboard">
+					<i class="material-icons">close</i>
+				</button>
+			</div>
+			<div class="leaderboard">
+				<span>testing</span>
 			</div>
 		</div>
 	</div>
+	<script src="scripts/jquery-3.6.0.min.js"></script>
+	<script type="module">
+		// Import the functions you need from the SDKs you need
+		import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.8/firebase-app.js";
+		import { getFirestore, collection, addDoc, getDocs , Timestamp} from "https://www.gstatic.com/firebasejs/9.6.8/firebase-firestore.js";
 
+		// Your web app's Firebase configuration
+		// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+		const firebaseConfig = {
+			apiKey: "AIzaSyDUBJ00Qv4r_JgipFF0TI03lmWkZBrqFGY",
+			authDomain: "vue-2048-scores.firebaseapp.com",
+			projectId: "vue-2048-scores",
+			storageBucket: "vue-2048-scores.appspot.com",
+			messagingSenderId: "914673312177",
+			appId: "1:914673312177:web:573e8be0840aa65cba5d90",
+			measurementId: "G-BLZS0DQ2E0"
+		};
+
+		// Initialize Firebase
+		const app = initializeApp(firebaseConfig);
+
+		// Initialize db
+		const db = getFirestore();
+
+		const addScoreToDB = async function() {
+			let name = document.querySelector('#name-for-leaderboard').value;
+			name = name.trim();
+
+			if (name === '') {
+				alert('You must provide a name to submit a score');
+				return;
+			}
+
+			let score = document.querySelector('.score-value');
+			score = parseInt(score);
+
+			const docRef = await addDoc(collection(db, 'high-scores'), {
+	  			name: name,
+	  			score: score,
+	 			date_created: Timestamp.fromDate(new Date()),
+			});
+
+			document.querySelector('#name-for-leaderboard').value = '';
+		}
+
+		const addScoresPage = async function() {
+			$('.leaderboard-wrapper').show(1000);
+
+			const parent = document.querySelector('.leaderboard');
+			parent.innerHTML = '';
+
+			const querySnapshot = await getDocs(collection(db, 'high-scores'));
+			querySnapshot.forEach((doc) => {
+				const data = doc.data();
+
+	 			const child = document.createElement('div');
+	 			child.classList.add('leaderboard-entry');
+
+	 			const name = document.createElement('span');
+	 			name.innerText = `Name: ${data.name}`;
+
+	 			const dateObj = new Date(data.date_created.toDate())
+	 			const date = document.createElement('span');
+	 			date.innerText = `Date: ${dateObj.toDateString()}`;
+
+	 			const score = document.createElement('span');
+	 			score.innerText = `Score: ${data.score}`;
+
+	 			child.appendChild(name);
+	 			child.appendChild(date);
+	 			child.appendChild(score);
+
+	 			parent.appendChild(child);
+			});
+		}
+
+		document.querySelector('#name-leaderboard').addEventListener('click', addScoreToDB);
+		document.querySelector('#show-leaderboard').addEventListener('click', addScoresPage);
+		document.querySelector('#hide-leaderboard').addEventListener('click', function() {
+			$('.leaderboard-wrapper').hide(1000);
+		});	
+	</script>
 	<script src="scripts/vue.js"></script>
 	<script src="scripts/main.js"></script>
 </body>

@@ -15,7 +15,8 @@ const app = new Vue({
                 gameBoard.removeChild(oldTileList[i]);
             }
 
-            document.querySelector('.game-over').style.visibility = 'hidden';
+            //document.querySelector('.game-over').style.visibility = 'hidden';
+            $('.game-over').hide(300);
 
             const scoreValueEle = document.querySelector('#score-value');
             scoreValueEle.innerText = 0;
@@ -89,7 +90,9 @@ const app = new Vue({
                 }
             }
 
-            document.querySelector('.game-over').style.visibility = 'visible';
+            //document.querySelector('.game-over').style.visibility = 'visible';
+            $('.game-over').show(300);
+
             return true;
         },
         boardChanged: function() {
@@ -332,19 +335,21 @@ const app = new Vue({
 app.start();
 
 document.addEventListener('keydown', function(event) {
-    event.preventDefault();
-
     switch(event.key) {
         case "ArrowUp":
+            event.preventDefault();
             app.shiftUp();
             break;
         case "ArrowDown":
+            event.preventDefault();
             app.shiftDown();
             break;
          case "ArrowLeft":
+            event.preventDefault();
             app.shiftLeft();
             break;
         case "ArrowRight":
+            event.preventDefault();
             app.shiftRight();
             break;
     }

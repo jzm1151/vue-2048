@@ -72,20 +72,31 @@ body {
 .game-over {
 	width: calc(4 * var(--cell-size) + 5 * var(--cell-spacing));
 	height: calc(4 * var(--cell-size) + 5 * var(--cell-spacing));
-	visibility: hidden;
 	position: absolute;
-	display: flex;
+	display: none;
+	flex-direction: column;
 	align-items: center;
   	justify-content: center;
 	border-radius: var(--boarder-r);
 	background-color: black;
 	opacity: .8;
 	z-index: 1;
+	overflow: hidden;
+}
+
+.game-over[style*='display: block']{
+    display: flex !important;
 }
 
 .game-over > span {
 	color: white;
 	font-size: calc(var(--cell-size) / 2);
+}
+
+.submit-leaderboard {
+	width: 100%;
+	display: flex;
+	justify-content: center;
 }
 
 .cell {
@@ -120,3 +131,80 @@ body {
 		border-radius: 50%;
 	}
 }
+
+.leaderboard-wrapper {
+	display: none;
+	position: absolute;
+	height: 70vmin;
+	width: 55vmin;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	border-radius: 6%;
+	box-shadow: 8.0px 16.0px 16.0px hsl(0deg 0% 0% / 0.25);
+	overflow: hidden;
+	background-color: white;
+	z-index: 10;
+}
+
+.exit-leaderboard {
+	height: 15%;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	font-size: 4vmin;
+	color: white;
+	background-color: #333333;
+}
+
+.leaderboard {
+	height: 85%;
+	width:  100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: white;
+	border-radius: inherit;
+	overflow: scroll;
+}
+
+.leaderboard-entry {
+	height: 10%;
+	width: 80%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	background-color: #333333;
+	border-radius: 3%;
+	box-shadow: 3.0px 16.0px 16.0px hsl(0deg 0% 0% / 0.25);
+	margin: .8rem;
+	flex-shrink: 0;
+	overflow: hidden;
+}
+
+.leaderboard-entry > span {
+	width: 100%;
+	text-align: center;
+	overflow: hidden;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
